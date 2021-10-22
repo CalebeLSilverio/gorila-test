@@ -1,0 +1,24 @@
+{
+  "name": "gorila-test",
+  "author": {
+    "name": "Calebe Leme Silvério",
+    "email": "calebe_kalighar@hotmail.com"
+  },
+  "version": "1.0.0",
+  "license": "MIT",
+  "keywords": [
+    "Gorila Invest",
+    "Servers",
+    "NodeJS"
+  ],
+  "description": "Service for gorila test",
+  "main": "src/main.js",
+  "private": false,
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">= 14.0.0",
+    "npm": ">= 6.0.0"
+  }
+}
