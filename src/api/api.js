@@ -1,24 +1,84 @@
 const http = require('http');
+const calculator = require('./svc/CBDcalculator');
 
-function handle(request) {
+function parseJSON(str){
 
-    if(request.message.method == 'GET'){
-
-        let response = new http.ServerResponse();
-        response.statusCode = 200;
-        response.setHeader('Content-Type', 'text/html');
-        response.end('<h1>Hello, World!</h1>');
-
-        return response;
+    let body;
+    try{
+        body = JSON.parse(str);
+        return body;
     }
-    else {
-        let response = new http.ServerResponse();
-        response.statusCode = 401;
-        response.setHeader('Content-Type', 'text/html');
-        response.end('<h1>Method not supported</h1>');
+    catch(e){
+        return undefined;
+    }
+}
 
-        return response;
+function isBodyValid(body){
+
+    if(body.investmentDate == undefined || body.cdbRate == undefined || body.currentDate == undefined){
+        return false;
     }
 
+    return true;
+}
+
+function isRequestValid(url, method, bodyStr) {
+
+    let body = parseJSON(bodyStr);
+    if(body == undefined){
+        return 400;
+    }
+
+    if(!isBodyValid(bodyStr)){
+        return 400;
+    }
+
+    if(url.replace('/', '') != 'calcCDBUnitPrice'){
+        return 404;
+    }
+
+    if(method != 'GET'){
+        return 405;
+    }
+
+    if(calculator.dateStrToNumber(body.investmentDate) < 20161114 || calculator.dateStrToNumber(body.currentDate) > 20161223){
+        return 406;
+    }
+
+    return 200;
+}
+
+function handle(request = http.IncomingMessage) {
+
+    let response = {
+        status: 0,
+        result: []
+    };
+
+
+    let buffers = [];
+
+    for await (const chunk of req) {
+        buffers.push(chunk);
+    }
+
+    let bodyStr = Buffer.concat(buffers).toString();
+
+    let status = isRequestValid(request.url, request.method, bodyStr);
+
+    if(status == 200){
+
+        response.status = 200;
+        let body = parseJSON(bodyStr);
+        response.result = calculator.calcCDBUnitPrice(body);
+
+    }
+    else{
+        response.status = status;
+    }
+
+    return response;
     
 }
+
+exports.handle = handle;
