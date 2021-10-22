@@ -38,10 +38,20 @@ const validDates = {
 
 const CDI = [ 13.88, 13.63];
 
+/**
+ * Takes the month and day of a date string and returns a number on the format mmdd (e.g. "2016-11-14" -> 1114)
+ * @param {The date string to be transformed} dateStr 
+ * @returns The number representing the month and day concatenated
+ */
 function dateStrToNumber(dateStr = ''){
     return Number.parseInt(dateStr.substr(8, 2)) + (Number.parseInt(dateStr.substr(5, 2))*100);
 }
 
+/**
+ * Calculates the CDB unit price for each business day from the specified investDate to the currentDate
+ * @param {The body data of the request} body 
+ * @returns An array of objects {date: String, unitPrice: Number} containing all te CDB unit prices since the investment date to current date
+ */
 function calcCDBUnitPrice(body = CDBInput) {
 
     let resultArray = [];
