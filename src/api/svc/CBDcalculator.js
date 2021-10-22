@@ -71,8 +71,9 @@ function calcCDBUnitPrice(body = CDBInput) {
         let tCDIk = Math.pow((CDIk/100)+1, (1/252)) - 1;
 
         tCDI *= 1 + tCDIk*body.cdbRate/100;
+        tCDI = Number(tCDI.toPrecision(9));
 
-        let unitPrice = 1000*tCDI;
+        let unitPrice = Number((1000*tCDI).toPrecision(6));
 
         let result = { date: validDates[index].date, unitPrice: unitPrice};
 
@@ -85,5 +86,6 @@ function calcCDBUnitPrice(body = CDBInput) {
 
 }
 
+exports.validDates = validDates;
 exports.dateStrToNumber = dateStrToNumber;
 exports.calcCDBUnitPrice = calcCDBUnitPrice;

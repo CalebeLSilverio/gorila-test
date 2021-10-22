@@ -29,7 +29,7 @@ function isRequestValid(url, method, bodyStr) {
         return 400;
     }
 
-    if(!isBodyValid(bodyStr)){
+    if(!isBodyValid(body)){
         return 400;
     }
 
@@ -41,43 +41,41 @@ function isRequestValid(url, method, bodyStr) {
         return 405;
     }
 
-    if(calculator.dateStrToNumber(body.investmentDate) < 20161114 || calculator.dateStrToNumber(body.currentDate) > 20161223){
+    if(calculator.dateStrToNumber(body.investmentDate) < 1114 || calculator.dateStrToNumber(body.currentDate) > 1223){
         return 406;
     }
 
     return 200;
 }
 
-function handle(request = http.IncomingMessage) {
+function calcCDBUnitPrice(bodyStr) {
 
     let response = {
         status: 0,
         result: []
     };
 
+    response.status = 200;
+    let body = parseJSON(bodyStr);
+    response.result = calculator.calcCDBUnitPrice(body);
 
-    let buffers = [];
+    return response;
+}
 
-    for await (const chunk of req) {
-        buffers.push(chunk);
-    }
-
-    let bodyStr = Buffer.concat(buffers).toString();
+function handle(request = http.IncomingMessage, bodyStr) {
 
     let status = isRequestValid(request.url, request.method, bodyStr);
 
     if(status == 200){
 
-        response.status = 200;
-        let body = parseJSON(bodyStr);
-        response.result = calculator.calcCDBUnitPrice(body);
+        if(request.url == '/calcCDBUnitPrice'){
+            return calcCDBUnitPrice(bodyStr);
+        }
 
     }
     else{
-        response.status = status;
+        return {status: status};
     }
-
-    return response;
     
 }
 
